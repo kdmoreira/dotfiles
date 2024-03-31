@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -eo pipefail
+
+function usage() {
+  echo "Usage: `basename $0` <package> <dependent_package>"
+}
+
+if [[ "$1" == "-h" ]]; then
+  usage
+  exit 0
+elif [[ ! $2 ]]; then
+  usage
+  exit 1
+fi
+
+package=$1
+dependent_package=$2
+
+package_exists=$(which $package | grep -o $package > /dev/null && echo 0 || echo 1)
+
+if [[ $package_exists -eq 1 ]]; then
+  echo "$package is not installed. Installing it..."
+  ./"$package"
+fi
+
+echo "$package installed. Installing $dependent_package..."

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# QEMU/KVM
+apt-get -y install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+systemctl enable --now libvirtd
+
+# Virtual Machine Manager
+apt install virt-manager
+
+# Username in virtualization groups
+adduser "$(id -un)" libvirt
+adduser "$(id -un)" kvm
+
+# log out and back in

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# download and install Node.js
+brew install node@20
+
+# verifies the right Node.js version is in the environment
+node -v # should print `v20.12.0`
+
+# verifies the right NPM version is in the environment
+npm -v # should print `10.5.0`
