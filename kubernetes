@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -euo pipefail
+
+kind() {
+    [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.25.0/kind-linux-amd64
+    chmod +x ./kind
+    sudo mv ./kind /usr/local/bin/kind
+}
+
+kubectl() {
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+    validate=$(echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check)
+    if [[ $validate != "OK" ]]; then
+        echo "something's wrong with the kubectl binary"
+        exit 1
+    fi
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+}
+
+kompose() {
+    curl -L https://github.com/kubernetes/kompose/releases/download/v1.34.0/kompose-linux-amd64 -o kompose
+    chmod +x kompose
+    sudo mv ./kompose /usr/local/bin/kompose
+}
+
+kubectx_kubens() {
+    sudo git clone https://github.com/ahmetb/kubectx /opt/kubectx
+    sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
+    sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens
+}
+
+kind
+kubectl
+kompose
+kubectx_kubens
